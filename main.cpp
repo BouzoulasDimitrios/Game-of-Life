@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include<unistd.h>
 
 using namespace std;
 
@@ -31,17 +32,17 @@ void edit_board(sf::RenderWindow & window, sf::Event & event,  sf::RectangleShap
             }
         }
     }
-
 }
+
 
 void randomize_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
 
         // Redraw the grid with updated colors
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
+
                 cellShape.setPosition(i * 50, j * 50);
                 
-
                 if(rand()%2)
                     grid[i][j] = !grid[i][j];
 
@@ -51,23 +52,27 @@ void randomize_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
                     cellShape.setFillColor(sf::Color::Black);
                 }
                 window.draw(cellShape);
+
             }
         }
 }
 
+
 bool cout_alive_neighbours(int x, int y){
+
+    int count = 0;
 
     for(int i = x-1; i <= x+1; i++){
         for(int j = y-1; j <= y+1; j++){
-        
+            if((i == x && j == y) || ((i < 0 || j < 0) || (i > 10 || j > 10)) )
+                continue;
+            else if(grid[i][j] == 1)    
+                count++;
         }
     }
 
+    return grid[x][y] ? (count == 2 || count == 3) : count == 3;
 
-
-
-
-    return false;
 }
 
 
@@ -76,35 +81,42 @@ bool update_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
         bool temp_grid[10][10] = {};
 
         // Redraw the grid with updated colors
-        int count = 0;
         for (int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
 
-                
-                // if(cout_alive_neighbours(i, j))
+                if(cout_alive_neighbours(i, j)){
+                    // cellShape.setFillColor(sf::Color::White);
+                    temp_grid[i][j] = 1;
+                }else{
+                    temp_grid[i][j] = 0;
+                    // cellShape.setFillColor(sf::Color::Black);
+                }
 
-
-
-
+                window.draw(cellShape);
 
             }
         }
 
         for (int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
-
                 
+                cellShape.setPosition(i * 50, j * 50);
+
+                if(temp_grid[i][j]){
+                    // cout<<"grid = "<<temp_grid[i][j]<<endl;
+                    cellShape.setFillColor(sf::Color::White);
+                    // temp_grid[i][j] = 1;
+                }else{
+                    cellShape.setFillColor(sf::Color::Black);
+                }
+                window.draw(cellShape);
+
                 grid[i][j] = temp_grid[i][j];
 
-
-
-
             }
         }
 
-
         return false;
-
 }
 
 int main()
@@ -122,7 +134,6 @@ int main()
     sf::Vector2f buttonSize(250.f, 100.f);
     sf::Vector2f buttonPos1(0.f, 500.f);
     sf::Vector2f buttonPos2(250.f, 500.f);
-
 
     sf::RectangleShape button1(buttonSize);
     button1.setPosition(buttonPos1);
@@ -147,7 +158,6 @@ int main()
     buttonText1.setCharacterSize(20);
 
     buttonText2.setCharacterSize(20);
-
 
     // Draw the grid
     for (int x = 0; x < 10; x++) {
@@ -177,6 +187,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
 
@@ -189,11 +200,6 @@ int main()
                     if(button1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
                         waiting_to_start = false;
 
-                    if(!waiting_to_start){
-
-                        // grid = update_board(grid)
-                    }
-
                     // Display the updated grid
                     window.draw(button1);
                     window.draw(buttonText1);
@@ -201,13 +207,23 @@ int main()
                     window.draw(buttonText2);
                     window.display();
 
-
                 }   
-            
-
             }
         }
-        
+
+        if(!waiting_to_start){
+            
+            update_board(window, cellShape);
+            unsigned int microsecond = 1000000;
+            usleep(1 * microsecond);//sleeps for 3 second
+            cout<<"updating\n";
+            window.draw(button1);
+            window.draw(buttonText1);
+            window.draw(button2);
+            window.draw(buttonText2);
+            window.display();
+
+        }
     }
 
     return 0;
