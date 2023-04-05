@@ -2,15 +2,16 @@
 #include <iostream>
 #include<unistd.h>
 
-using namespace std;
+// using namespace std;
 
-int grid_dim = 90;//20;
-int cell_pos = 10;//25;
-//bool grid[20][20] = {};
+int grid_dim = 90;
+int cell_pos = 10;
 bool grid[90][90] = {};
 
-void edit_board(sf::RenderWindow & window, sf::Event & event){ //,  sf::RectangleShape & cellShape ){
-sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
+void edit_board(sf::RenderWindow & window, sf::Event & event){ 
+    
+    sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
+    
     // Determine which cell was clicked
     int mouse_x = event.mouseButton.x , mouse_y = event.mouseButton.y;
 
@@ -28,7 +29,6 @@ sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
                 cellShape.setPosition(i * cell_pos, j * cell_pos);
                 
                 if(x == i && y == j){
-                    cout<<"\n\n HERE \n\n";
 
                     if (grid[i][j]) {
                         cellShape.setFillColor(sf::Color::Green);
@@ -44,6 +44,18 @@ sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
     }
 }
 
+void clear_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
+
+    for (int x = 0; x < grid_dim; x++) {
+        for (int y = 0; y < grid_dim; y++) {
+            cellShape.setPosition(x * cell_pos, y * cell_pos);
+            cellShape.setFillColor(sf::Color::Black);
+            grid[x][y] = false;
+            window.draw(cellShape);
+        }
+    }
+
+}
 
 void randomize_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
 
@@ -87,29 +99,28 @@ bool cout_alive_neighbours(int x, int y){
 
 void update_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
 
-        bool temp_grid[grid_dim][grid_dim] = {};
+    bool temp_grid[grid_dim][grid_dim] = {};
 
-        // Redraw the grid with updated colors
-        for (int i = 0; i < grid_dim; i++){
-            for(int j = 0; j < grid_dim; j++){
+    // Redraw the grid with updated colors
+    for (int i = 0; i < grid_dim; i++){
+        for(int j = 0; j < grid_dim; j++){
 
-                cout_alive_neighbours(i,j) ? temp_grid[i][j] = 1 : temp_grid[i][j] = 0; 
-                window.draw(cellShape);
+            cout_alive_neighbours(i,j) ? temp_grid[i][j] = 1 : temp_grid[i][j] = 0; 
+            window.draw(cellShape);
 
-            }
         }
+    }
 
-        for (int i = 0; i < grid_dim; i++){
-            for(int j = 0; j < grid_dim; j++){
-                
-                cellShape.setPosition(i * cell_pos, j * cell_pos);
-                temp_grid[i][j] ? cellShape.setFillColor(sf::Color::Green) : cellShape.setFillColor(sf::Color::Black);
-                window.draw(cellShape);
-                grid[i][j] = temp_grid[i][j];
+    for (int i = 0; i < grid_dim; i++){
+        for(int j = 0; j < grid_dim; j++){
+            
+            cellShape.setPosition(i * cell_pos, j * cell_pos);
+            temp_grid[i][j] ? cellShape.setFillColor(sf::Color::Green) : cellShape.setFillColor(sf::Color::Black);
+            window.draw(cellShape);
+            grid[i][j] = temp_grid[i][j];
 
-            }
         }
-
+    }
 
 }
 
@@ -244,38 +255,29 @@ int main()
                     if(button1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
                         waiting_to_start = false, is_paused = false;
 
-                    if(button2.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && (waiting_to_start))
+                    if(button2.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && (waiting_to_start)){
                         randomize_board(window, cellShape);
+                    }
 
                     if(button3.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
                         waiting_to_start = true, is_paused = true;
 
-                    // if(button4.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && waiting_to_start){
-                    //     for (int x = 0; x < grid_dim; x++) {
-                    //         for (int y = 0; y < grid_dim; y++) {
-                    //             cellShape.setPosition(x * cell_pos, y * cell_pos);
-                    //             if (grid[x][y]) {
-                    //                 cellShape.setFillColor(sf::Color::Green);
-                    //             }
-                    //             window.draw(cellShape);
-                    //         }
-                    //     }
-                    // }
+                    if(button4.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && waiting_to_start){
+
+                        clear_board(window, cellShape);
+                    
+                    }
 
 
-                    // Display the updated grid
-                    // if(!is_paused){
-                        cout<<"adfsjl"<<endl;
-                        window.draw(button1);
-                        window.draw(buttonText1);
-                        window.draw(button2);
-                        window.draw(buttonText2);
-                        window.draw(button3);
-                        window.draw(buttonText3);
-                        window.draw(button4);
-                        window.draw(buttonText4);
-                        window.display();
-                    // }
+                    window.draw(button1);
+                    window.draw(buttonText1);
+                    window.draw(button2);
+                    window.draw(buttonText2);
+                    window.draw(button3);
+                    window.draw(buttonText3);
+                    window.draw(button4);
+                    window.draw(buttonText4);
+                    window.display();
                 }   
 
 
@@ -284,11 +286,9 @@ int main()
         }
 
         if(!waiting_to_start && !is_paused){
-            cout<<waiting_to_start<<endl;
             update_board(window, cellShape);
             unsigned int microsecond = 500000;
-            usleep(1 * microsecond);//sleeps for 0.5s
-            cout<<"updating\n";
+            usleep(1 * microsecond);
 
             window.draw(button1);
             window.draw(buttonText1);
