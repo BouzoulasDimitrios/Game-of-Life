@@ -2,85 +2,113 @@
 #include <iostream>
 #include<unistd.h>
 
-// using namespace std;
-
 int grid_dim = 90;
 int cell_pos = 10;
 bool grid[90][90] = {};
 
-void edit_board(sf::RenderWindow & window, sf::Event & event){ 
+class UI{
+
+
+    public:
+        
+        sf::RectangleShape cellShape = sf::RectangleShape(sf::Vector2f(50, 50));
+        sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(900, 950), "Game of life!", sf::Style::Close);
+                
+        sf::Vector2f buttonSize = sf::Vector2f(250.f, 50.f);
+        sf::Font font;
+
+        sf::Text buttonText1 = sf::Text("Start", font);
+        sf::Text buttonText2 = sf::Text("Randomize", font);
+        sf::Text buttonText3 = sf::Text("Pause", font);
+        sf::Text buttonText4 = sf::Text("Clear", font);
+
+        sf::RectangleShape button1 = sf::RectangleShape(buttonSize);
+        
+        sf::RectangleShape button2 = sf::RectangleShape(buttonSize);
+        sf::RectangleShape button3 = sf::RectangleShape(buttonSize);
+        sf::RectangleShape button4 = sf::RectangleShape(buttonSize);
+
+        sf::FloatRect textRect1 = sf::FloatRect(buttonText1.getLocalBounds());
+        sf::FloatRect textRect2 = sf::FloatRect(buttonText1.getLocalBounds());
+        sf::FloatRect textRect3 = sf::FloatRect(buttonText1.getLocalBounds());
+        sf::FloatRect textRect4 = sf::FloatRect(buttonText1.getLocalBounds());
+
+        sf::Event event = sf::Event();
+
+    UI(){
+
+        sf::Color button_color(38, 30, 29);
+
+        font.loadFromFile("arial.ttf");
+
+        cellShape.setFillColor(sf::Color::Black);
+        cellShape.setOutlineThickness(1);
+        cellShape.setOutlineColor(sf::Color::Green);
+
+        sf::Vector2f buttonPos1(0.f, 900.f);
+        sf::Vector2f buttonPos2(225.f, 900.f);
+        sf::Vector2f buttonPos3(450.f, 900.f);
+        sf::Vector2f buttonPos4(675.f, 900.f);
+
+        button1.setPosition(buttonPos1);
+        button2.setPosition(buttonPos2);
+        button3.setPosition(buttonPos3);
+        button4.setPosition(buttonPos4);
+
+        button1.setFillColor(button_color);
+        button2.setFillColor(button_color);
+        button3.setFillColor(button_color);
+        button4.setFillColor(button_color);
+
+        buttonText1.setCharacterSize(20);
+        buttonText2.setCharacterSize(20);
+        buttonText3.setCharacterSize(20);
+        buttonText4.setCharacterSize(20);
+
+        buttonText1.setCharacterSize(20);
+        buttonText2.setCharacterSize(20);
+        buttonText4.setCharacterSize(20);
+        buttonText4.setCharacterSize(20);
+
+        buttonText1.setOrigin(textRect1.left + textRect1.width/2.0f, textRect1.top  + textRect1.height/2.0f);
+        buttonText2.setOrigin(textRect2.left + textRect2.width/2.0f, textRect2.top  + textRect2.height/2.0f);
+        buttonText3.setOrigin(textRect3.left + textRect3.width/2.0f, textRect3.top  + textRect3.height/2.0f);
+        buttonText4.setOrigin(textRect4.left + textRect4.width/2.0f, textRect4.top  + textRect4.height/2.0f);
+
+        buttonText1.setPosition(button1.getPosition() - sf::Vector2f(30,-15) + button1.getSize()/2.0f);
+        buttonText2.setPosition(button2.getPosition() - sf::Vector2f(60,-15) + button2.getSize()/2.0f);
+        buttonText3.setPosition(button3.getPosition() - sf::Vector2f(40,-15) + button3.getSize()/2.0f);
+        buttonText4.setPosition(button4.getPosition() - sf::Vector2f(40,-15) + button4.getSize()/2.0f);
+        
+        button1.setOutlineThickness(1.f);
+        button2.setOutlineThickness(1.f);
+        button3.setOutlineThickness(1.f);
+        button4.setOutlineThickness(1.f);
+        
+        button1.setOutlineColor(sf::Color::Black);
+        button2.setOutlineColor(sf::Color::Black);
+        button3.setOutlineColor(sf::Color::Black);
+        button4.setOutlineColor(sf::Color::Black);
     
-    sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
-    
-    // Determine which cell was clicked
-    int mouse_x = event.mouseButton.x , mouse_y = event.mouseButton.y;
-
-    if(( 0 <= mouse_x && mouse_x <= 1000) && (0 <= mouse_y && mouse_y <= 900)){ //;
-
-        int x = event.mouseButton.x / cell_pos;
-        int y = event.mouseButton.y / cell_pos;
-
-        // Toggle the color of the cell;
-        grid[x][y] = !grid[x][y];
-
-        // Redraw the grid with updated colors
-        for (int i = 0; i < grid_dim; i++) {
-            for (int j = 0; j < grid_dim; j++) {
-                cellShape.setPosition(i * cell_pos, j * cell_pos);
-                
-                if(x == i && y == j){
-
-                    if (grid[i][j]) {
-                        cellShape.setFillColor(sf::Color::Green);
-                    } else {
-                        cellShape.setFillColor(sf::Color::Black);
-                    }
-                    window.draw(cellShape);
-
-                }
-                
-            }
-        }
-    }
-}
-
-void clear_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
-
-    for (int x = 0; x < grid_dim; x++) {
-        for (int y = 0; y < grid_dim; y++) {
-            cellShape.setPosition(x * cell_pos, y * cell_pos);
-            cellShape.setFillColor(sf::Color::Black);
-            grid[x][y] = false;
-            window.draw(cellShape);
-        }
     }
 
-}
+    void draw(){
 
-void randomize_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
+        window.draw(button1);
+        window.draw(buttonText1);
+        window.draw(button2);
+        window.draw(buttonText2);
+        window.draw(button3);
+        window.draw(buttonText3);
+        window.draw(button4);
+        window.draw(buttonText4);
 
-        // Redraw the grid with updated colors
-        for (int i = 0; i < grid_dim; i++) {
-            for (int j = 0; j < grid_dim; j++) {
+    }
 
-                cellShape.setPosition(i * cell_pos, j * cell_pos);
-                
-                if(rand()%2)
-                    grid[i][j] = !grid[i][j];
-
-                if (grid[i][j]) {
-                    cellShape.setFillColor(sf::Color::Green);
-                } else {
-                    cellShape.setFillColor(sf::Color::Black);
-                }
-                window.draw(cellShape);
-
-            }
-        }
-}
+};
 
 
-bool cout_alive_neighbours(int x, int y){
+bool count_alive_neighbours(int x, int y){
 
     int count = 0;
 
@@ -97,208 +125,164 @@ bool cout_alive_neighbours(int x, int y){
 }
 
 
-void update_board(sf::RenderWindow & window, sf::RectangleShape & cellShape){
+void edit_board(UI& ui){ 
+    
+    sf::RectangleShape  cellShape(sf::Vector2f(9, 9));
+    
+    // Determine which cell was clicked
+    int mouse_x = ui.event.mouseButton.x , mouse_y = ui.event.mouseButton.y;
+
+    if(( 0 <= mouse_x && mouse_x <= 1000) && (0 <= mouse_y && mouse_y <= 900)){ //;
+
+        int x = ui.event.mouseButton.x / cell_pos;
+        int y = ui.event.mouseButton.y / cell_pos;
+
+        // Toggle the color of the cell;
+        grid[x][y] = !grid[x][y];
+
+        // Redraw the grid with updated colors
+        for (int i = 0; i < grid_dim; i++) {
+            for (int j = 0; j < grid_dim; j++) {
+                cellShape.setPosition(i * cell_pos, j * cell_pos);
+                
+                if(x == i && y == j){
+
+                    if (grid[i][j]) {
+                        cellShape.setFillColor(sf::Color::Green);
+                    } else {
+                        cellShape.setFillColor(sf::Color::Black);
+                    }
+                    ui.window.draw(cellShape);
+
+                }
+                
+            }
+        }
+    }
+}
+
+
+void randomize_board(UI & ui){
+
+        // Redraw the grid with updated colors
+        for (int i = 0; i < grid_dim; i++) {
+            for (int j = 0; j < grid_dim; j++) {
+
+                ui.cellShape.setPosition(i * cell_pos, j * cell_pos);
+                
+                if(rand()%2)
+                    grid[i][j] = !grid[i][j];
+
+                if (grid[i][j]) {
+                    ui.cellShape.setFillColor(sf::Color::Green);
+                } else {
+                    ui.cellShape.setFillColor(sf::Color::Black);
+                }
+                ui.window.draw(ui.cellShape);
+
+            }
+        }
+}
+
+
+void update_board(UI & ui){
 
     bool temp_grid[grid_dim][grid_dim] = {};
 
     // Redraw the grid with updated colors
     for (int i = 0; i < grid_dim; i++){
         for(int j = 0; j < grid_dim; j++){
-
-            cout_alive_neighbours(i,j) ? temp_grid[i][j] = 1 : temp_grid[i][j] = 0; 
-            window.draw(cellShape);
-
+            count_alive_neighbours(i,j) ? temp_grid[i][j] = 1 : temp_grid[i][j] = 0; 
+            ui.window.draw(ui.cellShape);
         }
     }
 
     for (int i = 0; i < grid_dim; i++){
         for(int j = 0; j < grid_dim; j++){
-            
-            cellShape.setPosition(i * cell_pos, j * cell_pos);
-            temp_grid[i][j] ? cellShape.setFillColor(sf::Color::Green) : cellShape.setFillColor(sf::Color::Black);
-            window.draw(cellShape);
+            ui.cellShape.setPosition(i * cell_pos, j * cell_pos);
+            temp_grid[i][j] ? ui.cellShape.setFillColor(sf::Color::Green) : ui.cellShape.setFillColor(sf::Color::Black);
+            ui.window.draw(ui.cellShape);
             grid[i][j] = temp_grid[i][j];
-
         }
     }
 
 }
+
+
+void clear_board(UI & ui){
+
+    for (int x = 0; x < grid_dim; x++) {
+        for (int y = 0; y < grid_dim; y++) {
+            ui.cellShape.setPosition(x * cell_pos, y * cell_pos);
+            ui.cellShape.setFillColor(sf::Color::Black);
+            grid[x][y] = false;
+            ui.window.draw(ui.cellShape);
+        }
+    }
+
+}
+
 
 int main()
 {
     bool waiting_to_start = true;
     bool is_paused = false;
 
-    // Create the window
-    sf::RenderWindow window(sf::VideoMode(900, 950), "Game of life!", sf::Style::Close);
-
-    // Create a rectangle shape to represent a grid cell
-    sf::RectangleShape cellShape(sf::Vector2f(50, 50));
-
-    cellShape.setFillColor(sf::Color::Black);
-    cellShape.setOutlineThickness(1);
-    cellShape.setOutlineColor(sf::Color::Green);
-
-    sf::Vector2f buttonSize(250.f, 50.f);
-    sf::Vector2f buttonPos1(0.f, 900.f);
-    sf::Vector2f buttonPos2(225.f, 900.f);
-    sf::Vector2f buttonPos3(450.f, 900.f);
-    sf::Vector2f buttonPos4(675.f, 900.f);
-
-    sf::RectangleShape button1(buttonSize);
-    sf::RectangleShape button2(buttonSize);
-    sf::RectangleShape button3(buttonSize);
-    sf::RectangleShape button4(buttonSize);
-
-    button1.setPosition(buttonPos1);
-    button2.setPosition(buttonPos2);
-    button3.setPosition(buttonPos3);
-    button4.setPosition(buttonPos4);
-
-    sf::Color button_color(38, 30, 29);
-
-    button1.setFillColor(button_color);
-    button2.setFillColor(button_color);
-    button3.setFillColor(button_color);
-    button4.setFillColor(button_color);
-    
-    sf::Font font;
-    font.loadFromFile("arial.ttf");
-
-    sf::Text buttonText1("Start", font);
-    buttonText1.setCharacterSize(20);
-    buttonText1.setPosition(buttonPos1.x + 120.f, buttonPos1.y + 10.f);
-
-    sf::Text buttonText2("Randomize", font);
-    buttonText2.setCharacterSize(20);
-    buttonText2.setPosition(buttonPos2.x + 10.f, buttonPos2.y + 10.f);
-
-    sf::Text buttonText3("Pause", font);
-    buttonText3.setCharacterSize(20);
-    buttonText3.setPosition(buttonPos3.x + 10.f, buttonPos3.y + 10.f);
-
-    sf::Text buttonText4("Clear", font);
-    buttonText4.setCharacterSize(20);
-    buttonText4.setPosition(buttonPos4.x + 10.f, buttonPos4.y + 10.f);
-
-    buttonText1.setCharacterSize(20);
-    buttonText2.setCharacterSize(20);
-    buttonText4.setCharacterSize(20);
-    buttonText4.setCharacterSize(20);
-
-    sf::FloatRect textRect1 = buttonText1.getLocalBounds();
-    buttonText1.setOrigin(textRect1.left + textRect1.width/2.0f, textRect1.top  + textRect1.height/2.0f);
-    buttonText1.setPosition(button1.getPosition() - sf::Vector2f(10,0) + button1.getSize()/2.0f);
-    
-    sf::FloatRect textRect2 = buttonText2.getLocalBounds();
-    buttonText2.setOrigin(textRect2.left + textRect2.width/2.0f, textRect2.top  + textRect2.height/2.0f);
-    buttonText2.setPosition(button2.getPosition() - sf::Vector2f(10,0) + button2.getSize()/2.0f);
-
-    sf::FloatRect textRect3 = buttonText3.getLocalBounds();
-    buttonText3.setOrigin(textRect3.left + textRect3.width/2.0f, textRect3.top  + textRect3.height/2.0f);
-    buttonText3.setPosition(button3.getPosition() - sf::Vector2f(10,0) + button3.getSize()/2.0f);
-    
-    sf::FloatRect textRect4 = buttonText4.getLocalBounds();
-    buttonText4.setOrigin(textRect4.left + textRect4.width/2.0f, textRect4.top  + textRect4.height/2.0f);
-    buttonText4.setPosition(button4.getPosition() - sf::Vector2f(10,0) + button4.getSize()/2.0f);
-
-    button1.setOutlineThickness(1.f);
-    button2.setOutlineThickness(1.f);
-    button3.setOutlineThickness(1.f);
-    button4.setOutlineThickness(1.f);
-    
-    button1.setOutlineColor(sf::Color::Black);
-    button2.setOutlineColor(sf::Color::Black);
-    button3.setOutlineColor(sf::Color::Black);
-    button4.setOutlineColor(sf::Color::Black);
+    UI ui;
 
     // Draw the grid
     for (int x = 0; x < grid_dim; x++) {
         for (int y = 0; y < grid_dim; y++) {
-            cellShape.setPosition(x * cell_pos, y * cell_pos);
+            ui.cellShape.setPosition(x * cell_pos, y * cell_pos);
             if (grid[x][y]) {
-                cellShape.setFillColor(sf::Color::Green);
+                ui.cellShape.setFillColor(sf::Color::Green);
             }
-            window.draw(cellShape);
+            ui.window.draw(ui.cellShape);
         }
     }
 
-    window.draw(button1);
-    window.draw(buttonText1);
-    window.draw(button2);
-    window.draw(buttonText2);
-    window.draw(button3);
-    window.draw(buttonText3);
-    window.draw(button4);
-    window.draw(buttonText4);
+    ui.draw();
+    ui.window.display();
 
+    while (ui.window.isOpen()){
 
-    // Display the window
-    window.display();
+        while (ui.window.pollEvent(ui.event)){
 
-    // Main loop
-    while (window.isOpen())
-    {
-        // Handle events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-
-            if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
+            if (ui.event.type == sf::Event::Closed)
+                ui.window.close();
+        
+            if (ui.event.type == sf::Event::MouseButtonPressed) {
+                if (ui.event.mouseButton.button == sf::Mouse::Left) {
 
                     if(waiting_to_start)
-                        edit_board(window, event);//, cellShape);
-                    
-                    if(button1.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
+                        edit_board(ui);
+
+                    if(ui.button1.getGlobalBounds().contains(ui.event.mouseButton.x, ui.event.mouseButton.y))
                         waiting_to_start = false, is_paused = false;
-
-                    if(button2.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && (waiting_to_start)){
-                        randomize_board(window, cellShape);
-                    }
-
-                    if(button3.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
+            
+                    if(ui.button2.getGlobalBounds().contains(ui.event.mouseButton.x, ui.event.mouseButton.y) && (waiting_to_start))
+                        randomize_board(ui);
+                    
+                    if(ui.button3.getGlobalBounds().contains(ui.event.mouseButton.x, ui.event.mouseButton.y))
                         waiting_to_start = true, is_paused = true;
 
-                    if(button4.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && waiting_to_start){
+                    if(ui.button4.getGlobalBounds().contains(ui.event.mouseButton.x, ui.event.mouseButton.y) && waiting_to_start)
+                        clear_board(ui);
 
-                        clear_board(window, cellShape);
-                    
-                    }
+                    ui.draw();
+                    ui.window.display();
 
-
-                    window.draw(button1);
-                    window.draw(buttonText1);
-                    window.draw(button2);
-                    window.draw(buttonText2);
-                    window.draw(button3);
-                    window.draw(buttonText3);
-                    window.draw(button4);
-                    window.draw(buttonText4);
-                    window.display();
                 }   
-
-
             }
-
         }
 
-        if(!waiting_to_start && !is_paused){
-            update_board(window, cellShape);
-            unsigned int microsecond = 500000;
-            usleep(1 * microsecond);
 
-            window.draw(button1);
-            window.draw(buttonText1);
-            window.draw(button2);
-            window.draw(buttonText2);
-            window.draw(button3);
-            window.draw(buttonText3);
-            window.draw(button4);
-            window.draw(buttonText4);
-            window.display();
+        if(!waiting_to_start && !is_paused){
+            update_board(ui);
+            unsigned int microsecond = 200000;
+            usleep(1 * microsecond);
+            ui.draw();
+            ui.window.display();
 
         }
 
