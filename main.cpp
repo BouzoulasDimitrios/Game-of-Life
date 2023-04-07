@@ -2,8 +2,13 @@
 #include <iostream>
 #include<unistd.h>
 
-int grid_dim = 90;
-int cell_pos = 10;
+const int GRID_DIM = 90;
+const int CELL_POS = 10;
+const int WINDOW_WIDTH = 950;
+const int WINDOW_HEIGHT = 900;
+const int BUTTON_WIDTH = 250;
+const int BUTTON_HEIGHT = 50;
+
 bool grid[90][90] = {};
 
 class UI{
@@ -12,9 +17,9 @@ class UI{
     public:
         
         sf::RectangleShape cellShape = sf::RectangleShape(sf::Vector2f(50, 50));
-        sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(900, 950), "Game of life!", sf::Style::Close);
+        sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Game of life!", sf::Style::Close);
                 
-        sf::Vector2f buttonSize = sf::Vector2f(250.f, 50.f);
+        sf::Vector2f buttonSize = sf::Vector2f(BUTTON_WIDTH, BUTTON_HEIGHT);
         sf::Font font;
 
         sf::Text buttonText1 = sf::Text("Start", font);
@@ -114,7 +119,7 @@ bool count_alive_neighbours(int x, int y){
 
     for(int i = x-1; i <= x+1; i++){
         for(int j = y-1; j <= y+1; j++){
-            if((i == x && j == y) || ((i < 0 || j < 0) || (i > grid_dim || j > grid_dim)) )
+            if((i == x && j == y) || ((i < 0 || j < 0) || (i > GRID_DIM || j > GRID_DIM)) )
                 continue;
             else if(grid[i][j] == 1)    
                 count++;
@@ -134,16 +139,16 @@ void edit_board(UI& ui){
 
     if(( 0 <= mouse_x && mouse_x <= 1000) && (0 <= mouse_y && mouse_y <= 900)){ //;
 
-        int x = ui.event.mouseButton.x / cell_pos;
-        int y = ui.event.mouseButton.y / cell_pos;
+        int x = ui.event.mouseButton.x / CELL_POS;
+        int y = ui.event.mouseButton.y / CELL_POS;
 
         // Toggle the color of the cell;
         grid[x][y] = !grid[x][y];
 
         // Redraw the grid with updated colors
-        for (int i = 0; i < grid_dim; i++) {
-            for (int j = 0; j < grid_dim; j++) {
-                cellShape.setPosition(i * cell_pos, j * cell_pos);
+        for (int i = 0; i < GRID_DIM; i++) {
+            for (int j = 0; j < GRID_DIM; j++) {
+                cellShape.setPosition(i * CELL_POS, j * CELL_POS);
                 
                 if(x == i && y == j){
 
@@ -165,10 +170,10 @@ void edit_board(UI& ui){
 void randomize_board(UI & ui){
 
         // Redraw the grid with updated colors
-        for (int i = 0; i < grid_dim; i++) {
-            for (int j = 0; j < grid_dim; j++) {
+        for (int i = 0; i < GRID_DIM; i++) {
+            for (int j = 0; j < GRID_DIM; j++) {
 
-                ui.cellShape.setPosition(i * cell_pos, j * cell_pos);
+                ui.cellShape.setPosition(i * CELL_POS, j * CELL_POS);
                 
                 if(rand()%2)
                     grid[i][j] = !grid[i][j];
@@ -187,19 +192,19 @@ void randomize_board(UI & ui){
 
 void update_board(UI & ui){
 
-    bool temp_grid[grid_dim][grid_dim] = {};
+    bool temp_grid[GRID_DIM][GRID_DIM] = {};
 
     // Redraw the grid with updated colors
-    for (int i = 0; i < grid_dim; i++){
-        for(int j = 0; j < grid_dim; j++){
+    for (int i = 0; i < GRID_DIM; i++){
+        for(int j = 0; j < GRID_DIM; j++){
             count_alive_neighbours(i,j) ? temp_grid[i][j] = 1 : temp_grid[i][j] = 0; 
             ui.window.draw(ui.cellShape);
         }
     }
 
-    for (int i = 0; i < grid_dim; i++){
-        for(int j = 0; j < grid_dim; j++){
-            ui.cellShape.setPosition(i * cell_pos, j * cell_pos);
+    for (int i = 0; i < GRID_DIM; i++){
+        for(int j = 0; j < GRID_DIM; j++){
+            ui.cellShape.setPosition(i * CELL_POS, j * CELL_POS);
             temp_grid[i][j] ? ui.cellShape.setFillColor(sf::Color::Green) : ui.cellShape.setFillColor(sf::Color::Black);
             ui.window.draw(ui.cellShape);
             grid[i][j] = temp_grid[i][j];
@@ -211,9 +216,9 @@ void update_board(UI & ui){
 
 void clear_board(UI & ui){
 
-    for (int x = 0; x < grid_dim; x++) {
-        for (int y = 0; y < grid_dim; y++) {
-            ui.cellShape.setPosition(x * cell_pos, y * cell_pos);
+    for (int x = 0; x < GRID_DIM; x++) {
+        for (int y = 0; y < GRID_DIM; y++) {
+            ui.cellShape.setPosition(x * CELL_POS, y * CELL_POS);
             ui.cellShape.setFillColor(sf::Color::Black);
             grid[x][y] = false;
             ui.window.draw(ui.cellShape);
@@ -231,9 +236,9 @@ int main()
     UI ui;
 
     // Draw the grid
-    for (int x = 0; x < grid_dim; x++) {
-        for (int y = 0; y < grid_dim; y++) {
-            ui.cellShape.setPosition(x * cell_pos, y * cell_pos);
+    for (int x = 0; x < GRID_DIM; x++) {
+        for (int y = 0; y < GRID_DIM; y++) {
+            ui.cellShape.setPosition(x * CELL_POS, y * CELL_POS);
             if (grid[x][y]) {
                 ui.cellShape.setFillColor(sf::Color::Green);
             }
